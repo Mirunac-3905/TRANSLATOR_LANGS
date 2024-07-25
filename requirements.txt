@@ -1,4 +1,4 @@
-streamlit==latest_version
+streamlit==1.22.0
 googletrans==4.0.0-rc1
 gtts
 pillow
