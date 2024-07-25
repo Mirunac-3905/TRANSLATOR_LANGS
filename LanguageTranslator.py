@@ -208,7 +208,6 @@ import streamlit as st
 from googletrans import Translator
 from gtts import gTTS
 import speech_recognition as sr
-import pyaudio
 
 # Function to translate text
 def translate_text(text, target_language):
@@ -223,26 +222,8 @@ def text_to_speech(text, lang):
     tts.save(filename)
     return filename
 
-# Function to recognize speech from mic using Google Web Speech API
-def recognize_speech_from_mic_web():
-    try:
-        recognizer = sr.Recognizer()
-        with sr.Microphone() as source:
-            st.write("Please say something...")
-            recognizer.adjust_for_ambient_noise(source)
-            audio = recognizer.listen(source)
-        text = recognizer.recognize_google(audio)
-        st.write(f"You said: {text}")
-        return text
-    except sr.UnknownValueError:
-        st.write("Google Web Speech API could not understand the audio")
-    except sr.RequestError as e:
-        st.write(f"Could not request results from Google Web Speech API; {e}")
-
-# Function to recognize speech from mic using local SpeechRecognition
-def recognize_speech_from_mic_local():
-    recognizer = sr.Recognizer()
-    microphone = sr.Microphone()
+# Function to recognize speech
+def recognize_speech_from_mic(recognizer, microphone):
     with microphone as source:
         recognizer.adjust_for_ambient_noise(source)
         audio = recognizer.listen(source)
@@ -299,9 +280,15 @@ st.write("Use this section to translate spoken words to the target language.")
 
 if st.button("Speak"):
     st.write("Listening...")
-    speech_text = recognize_speech_from_mic_web()
+    recognizer = sr.Recognizer()
+    microphone = sr.Microphone()
 
-    if speech_text:
+    try:
+        with microphone as source:
+            recognizer.adjust_for_ambient_noise(source)
+            audio = recognizer.listen(source)
+        speech_text = recognizer.recognize_google(audio)
+
         # Translate the recognized text to the selected language
         translated_text = translate_text(speech_text, languages[target_language])
 
@@ -315,15 +302,28 @@ if st.button("Speak"):
         audio_file = text_to_speech(translated_text, languages[target_language])
         st.audio(audio_file, format='audio/mp3')
 
-if st.button("Translate Speech"):
-    speech_text = recognize_speech_from_mic_local()
+    except sr.RequestError:
+        st.error("API unavailable")
+    except sr.UnknownValueError:
+        st.error("Unable to recognize speech. Please check your microphone and try again.")
 
-    if speech_text:
+if st.button("Translate Speech"):
+    recognizer = sr.Recognizer()
+    microphone = sr.Microphone()
+    with microphone as source:
+        recognizer.adjust_for_ambient_noise(source)
+        audio = recognizer.listen(source)
+    try:
+        speech_text = recognizer.recognize_google(audio)
         translated_text = translate_text(speech_text, languages[target_language])
         st.subheader("Translated Text:")
         st.write(translated_text)
         audio_file = text_to_speech(translated_text, languages[target_language])
         st.audio(audio_file, format='audio/mp3')
+    except sr.RequestError:
+        st.error("API unavailable")
+    except sr.UnknownValueError:
+        st.error("Unable to recognize speech. Please try again.")
 
 # Upload text file for translation
 st.subheader("Text File Translation")
