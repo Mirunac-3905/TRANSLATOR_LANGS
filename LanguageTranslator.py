@@ -204,6 +204,7 @@
 # # pip install streamlit googletrans==4.0.0-rc1 gtts pytesseract pillow pymongo bcrypt
 
 
+
 import streamlit as st
 from googletrans import Translator
 from gtts import gTTS
