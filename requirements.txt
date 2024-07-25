@@ -1,0 +1,9 @@
+streamlit
+googletrans==4.0.0-rc1
+gtts
+pillow
+pymongo
+bcrypt
+pyaudio==0.2.11
+speechrecognition
+
