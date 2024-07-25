@@ -4,5 +4,4 @@ gtts
 pillow
 pymongo
 bcrypt
-pyaudio==0.2.11
 SpeechRecognition==3.8.1
