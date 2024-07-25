@@ -208,6 +208,7 @@ import streamlit as st
 from googletrans import Translator
 from gtts import gTTS
 import speech_recognition as sr
+import pyaudio
 
 # Function to translate text
 def translate_text(text, target_language):
