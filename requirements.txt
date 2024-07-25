@@ -1,9 +1,8 @@
-streamlit
+streamlit==latest_version
 googletrans==4.0.0-rc1
 gtts
 pillow
 pymongo
 bcrypt
 pyaudio==0.2.11
-speechrecognition
-
+SpeechRecognition==3.8.1
